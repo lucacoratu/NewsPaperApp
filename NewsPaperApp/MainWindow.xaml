@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="NewsPaperApp" Height="800" Width="1000" FontFamily="Calisto MT" FontSize="14" WindowStartupLocation="CenterScreen" MinWidth="800" MinHeight="600">
     <DockPanel x:Name="dckpanel_mainwindow" LastChildFill="False" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}">
-        <StackPanel x:Name="stkpanel_design_login" Width="119" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
+        <StackPanel x:Name="stkpanel_design_login" Width="120" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
         <Grid Width="879">
             <Label x:Name="lbl_username" Content="Username" HorizontalAlignment="Left" Margin="78,166,0,0" VerticalAlignment="Top" Width="190" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" FontSize="18"/>
             <Label x:Name="lbl_password" Content="Password" HorizontalAlignment="Left" Margin="78,235,0,0" VerticalAlignment="Top" Width="190" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" FontSize="18"/>

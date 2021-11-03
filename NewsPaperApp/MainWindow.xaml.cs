@@ -92,6 +92,9 @@ namespace NewsPaperApp
         private void lbl_signup_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
             //Go to the register page
+            this.Hide();
+            RegisterWindow regWindow = new RegisterWindow();
+            regWindow.Show();
         }
     }
 }
