@@ -17,6 +17,7 @@
             <Button x:Name="btn_login" Content="Login" HorizontalAlignment="Left" Margin="356,312,0,0" VerticalAlignment="Top" Width="138" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Click="btn_login_Click"/>
             <Label x:Name="lbl_noAccount" Content="Don't have an account?" HorizontalAlignment="Left" Margin="78,405,0,0" VerticalAlignment="Top" Width="187" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" FontSize="17"/>
             <Label x:Name="lbl_signup" Content="Sign up!" HorizontalAlignment="Left" Margin="265,404,0,0" VerticalAlignment="Top" Width="87" Foreground="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}" FontSize="18" Cursor="Hand" MouseLeftButtonUp="lbl_signup_MouseLeftButtonUp"/>
+            <CheckBox x:Name="ckbox_rememberMe" Content="Remember Me" HorizontalAlignment="Left" Margin="159,317,0,0" VerticalAlignment="Top" Foreground="{DynamicResource {x:Static SystemColors.ControlLightBrushKey}}" FlowDirection="RightToLeft"/>
         </Grid>
     </DockPanel>
 </Window>

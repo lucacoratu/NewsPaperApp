@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Cryptography;
+using System.IO;
 
 namespace NewsPaperApp
 {
@@ -24,13 +25,37 @@ namespace NewsPaperApp
         private int login_button_click_count = 0;
         private long start;
         private long end;
-        private long elapsedTime = 30;
+
+        const string filePath = "rememberMe.txt";
+
+        private void CompleteLoginCredentials()
+        {
+            if (File.Exists(filePath))
+            {
+                string text = File.ReadAllText(filePath);
+                string[] tokens = text.Split(' ');
+
+                if (tokens[0] == "1")
+                {
+                    this.txtbox_username.Text = tokens[1];
+                    this.txtbox_password.Password = tokens[2];
+                    this.txtbox_enterPassword.Visibility = Visibility.Hidden;
+                    this.ckbox_rememberMe.IsChecked = true;
+                }
+                else
+                {
+                    this.ckbox_rememberMe.IsChecked = false;
+                } 
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
+
+            CompleteLoginCredentials();
         }
 
-        public static string ByteArrayToHexString(byte[] Bytes)
+        private string ByteArrayToHexString(byte[] Bytes)
         {
             StringBuilder Result = new StringBuilder(Bytes.Length * 2);
             string HexAlphabet = "0123456789ABCDEF";
@@ -48,6 +73,7 @@ namespace NewsPaperApp
         {
             this.txtbox_enterPassword.Visibility = Visibility.Hidden;
             this.txtbox_password.Visibility = Visibility.Visible;
+            this.txtbox_password.Focus();
         }
 
         private void txtbox_username_GotFocus(object sender, RoutedEventArgs e)
@@ -77,8 +103,26 @@ namespace NewsPaperApp
 
                 if (DatabaseConnection.CheckLoginCredentials(username, HashedPassword) == true)
                 {
-                    MessageBox.Show("Login successful", "Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    //MessageBox.Show("Login successful", "Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    //Save the credentials in the rememberMe file if the user checked this
+
+                    if(this.ckbox_rememberMe.IsChecked == true)
+                    {
+                        FileStream fstream = File.OpenWrite(filePath);
+                        string outString = "1 " + username + " " + password;
+
+                        fstream.Write(Encoding.ASCII.GetBytes(outString));
+                        fstream.Close();
+                    }
+                    
+                    
+                    ClientData.SetConnectedAccountUsername(username);
+                    MainPage mainPage = new MainPage();
+                    this.Hide();
+                    mainPage.Show();
                     this.login_button_click_count = 0;
+
+
                 }
                 else
                 {

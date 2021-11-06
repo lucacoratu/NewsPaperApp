@@ -64,5 +64,62 @@ namespace NewsPaperApp
 
             return true;
         }
+
+        public static List<string> GetProfileDetails(string username)
+        {
+            List<string> details = new List<string>();
+
+            string query = "select CreationDate, Email, AccountTypes.Nume from Accounts inner join AccountTypes on Accounts.Type = AccountTypes.ID where Username = \'" + username + "\'";
+
+            SqlDataAdapter da = new SqlDataAdapter(query, connectionString);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+
+            for(int i = 0; i < dt.Rows.Count; i++)
+            {
+                details.Add(dt.Rows[i].Field<DateTime>("CreationDate").ToString());
+                details.Add(dt.Rows[i].Field<string>("Email"));
+                details.Add(dt.Rows[i].Field<string>("Nume"));
+            }
+
+            return details;
+        }
+
+        public static bool ChangePassword(string username, string newHashedPassword)
+        {
+            //A check to be sure but it should not get to the stage where the user can change the password if he is not logged in
+            if(DatabaseConnection.AccountExists(username) == false)
+            {
+                return false;
+            }
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+            
+            //Open the connection
+            sqlConnection.Open();
+
+            //Query for updating the password
+            cmd.CommandText = "update Accounts set Password = \'" + newHashedPassword + "\' where Username = \'" + username + "\'";
+
+            //Execute the query
+            cmd.ExecuteNonQuery();
+
+            //Close the connection
+            sqlConnection.Close();
+
+            //Return the status of the execution
+            return true;
+        }
+
+        public static bool ComparePasswords(string username, string newHashedPassword)
+        {
+            string query = "select * from Accounts where Username = \'" + username + "\' and Password = \'" + newHashedPassword + "\'";
+            SqlDataAdapter da = new SqlDataAdapter(query, connectionString);
+            DataTable dt = new DataTable();
+            da.Fill(dt);
+
+            return ((dt.Rows.Count == 0) ? true : false);
+        }
     }
 }
