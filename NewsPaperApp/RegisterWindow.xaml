@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:NewsPaperApp"
         mc:Ignorable="d"
-        Title="NewsPaperApp" Height="800" Width="1000" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" FontFamily="Calisto MT" FontSize="16" WindowStartupLocation="CenterScreen">
+        Title="NewsPaperApp" Height="800" Width="1000" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" FontFamily="Calisto MT" FontSize="16" WindowStartupLocation="CenterScreen" Closed="register_window_Closed">
     <DockPanel LastChildFill="False">
         <StackPanel Width="120" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
         <Grid x:Name="register_grid" Width="878">

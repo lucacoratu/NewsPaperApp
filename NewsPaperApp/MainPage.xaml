@@ -1,0 +1,20 @@
+﻿<Window x:Name="mainpage_window" x:Class="NewsPaperApp.MainPage"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:NewsPaperApp"
+        mc:Ignorable="d"
+        Title="MainPage" Height="800" Width="1000" Cursor="Hand" WindowStartupLocation="CenterScreen" MinWidth="800" MinHeight="600" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Closed="mainpage_window_Closed">
+    <DockPanel LastChildFill="False">
+        <StackPanel x:Name="stkpanel_left" Width="134" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
+            <Ellipse x:Name="elipse_profile" Height="80" Stroke="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Width="80" MouseLeftButtonUp="elipse_profile_MouseLeftButtonUp">
+                <Ellipse.Fill>
+                    <ImageBrush ImageSource="/profile_test.png"/>
+                </Ellipse.Fill>
+            </Ellipse>
+            <Label x:Name="lbl_profile" Content="Profile" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" HorizontalAlignment="Center"/>
+        </StackPanel>
+        <ListBox x:Name="listbox_newspapers" Width="864" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Cursor="Hand"/>
+    </DockPanel>
+</Window>

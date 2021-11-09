@@ -65,5 +65,10 @@ namespace NewsPaperApp
 
             this.lbl_output.Content = "Your account has been registered, you can go back to the login";
         }
+
+        private void register_window_Closed(object sender, EventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
     }
 }
