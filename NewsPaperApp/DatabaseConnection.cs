@@ -150,12 +150,13 @@ namespace NewsPaperApp
         public static List<Article> GetNewspaperArticles(string name)
         {
             List<Article> articles = new List<Article>();
-            string query = @"Title, Accounts.Username, Content from Article
+            string query = @"select Title, Accounts.Username, Content from Article
                             inner join Accounts
                             on Accounts.ID = Article.PublisherID
                             inner join NewsPaper
                             on NewsPaper.ID = Article.NewsPaperID
-                            where NewsPaper.Name = '" + name + "'";
+                            where NewsPaper.Name =" + "\'" + name + "\'";
+
 
             SqlDataAdapter da = new SqlDataAdapter(query, connectionString);
             DataTable dt = new DataTable();

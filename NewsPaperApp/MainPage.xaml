@@ -10,7 +10,7 @@
         <StackPanel x:Name="stkpanel_left" Width="134" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
             <Ellipse x:Name="elipse_profile" Height="80" Stroke="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Width="80" MouseLeftButtonUp="elipse_profile_MouseLeftButtonUp">
                 <Ellipse.Fill>
-                    <ImageBrush ImageSource="/profile_test.png"/>
+                    <ImageBrush/>
                 </Ellipse.Fill>
             </Ellipse>
             <Label x:Name="lbl_profile" Content="Profile" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" HorizontalAlignment="Center"/>

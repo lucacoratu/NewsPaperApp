@@ -56,9 +56,15 @@ namespace NewsPaperApp
         private void usercontrol_clicked(object sender, MouseButtonEventArgs e)
         {
             //ClientData.SetCurrentNewspaper(this.listbox_newspapers.SelectedItem)
-            ArticleViewer artviewer = new ArticleViewer();
-            this.Hide();
-            artviewer.Show();
+            
+            if (this.listbox_newspapers.SelectedIndex != -1)
+            {
+                ClientData.SetCurrentNewspaper(this.newsPapers[this.listbox_newspapers.SelectedIndex].GetName());
+                ArticleViewer artviewer = new ArticleViewer();
+                this.Hide();
+                artviewer.Show();
+            }
+
         }
 
 

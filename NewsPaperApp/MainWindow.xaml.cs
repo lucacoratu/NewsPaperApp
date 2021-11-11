@@ -13,6 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Security.Cryptography;
+using System.IO;
 
 namespace NewsPaperApp
 {
@@ -24,10 +25,46 @@ namespace NewsPaperApp
         private int login_button_click_count = 0;
         private long start;
         private long end;
-        private long elapsedTime = 30;
+        private const string filepath = "credentials.txt";
         public MainWindow()
         {
             InitializeComponent();
+
+            LoadCredentialsFromFile();
+        }
+
+        private void LoadCredentialsFromFile()
+        {
+            if (File.Exists(filepath))
+            {
+                string content = File.ReadAllText(filepath);
+
+                if (content != "")
+                {
+                    string[] tokens = content.Split(' ');
+
+
+                    if (tokens[0] == "1")
+                    {
+                        this.chkbox_remember_me.IsChecked = true;
+                    }
+                    else
+                    {
+                        this.chkbox_remember_me.IsChecked = false;
+                    }
+
+                    this.txtbox_username.Text = tokens[1];
+                    this.txtbox_password.Password = tokens[2];
+                    this.txtbox_enterPassword.Text = "";
+                    this.txtbox_enterPassword.Visibility = Visibility.Hidden;
+                    this.txtbox_password.Visibility = Visibility.Visible; 
+                    this.txtbox_username.HorizontalContentAlignment = HorizontalAlignment.Left;
+                }
+            }
+        }
+        private void SaveCredentialsInFile()
+        {
+            File.WriteAllText(filepath, "1 " + this.txtbox_username.Text + " " + this.txtbox_password.Password);
         }
 
         public static string ByteArrayToHexString(byte[] Bytes)
@@ -48,11 +85,13 @@ namespace NewsPaperApp
         {
             this.txtbox_enterPassword.Visibility = Visibility.Hidden;
             this.txtbox_password.Visibility = Visibility.Visible;
+            this.txtbox_password.Focus();
         }
 
         private void txtbox_username_GotFocus(object sender, RoutedEventArgs e)
         {
             this.txtbox_username.Text = "";
+            this.txtbox_username.HorizontalContentAlignment = HorizontalAlignment.Left;
         }
 
         private void btn_login_Click(object sender, RoutedEventArgs e)
@@ -77,8 +116,18 @@ namespace NewsPaperApp
 
                 if (DatabaseConnection.CheckLoginCredentials(username, HashedPassword) == true)
                 {
-                    MessageBox.Show("Login successful", "Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+                    //MessageBox.Show("Login successful", "Success", MessageBoxButton.OK, MessageBoxImage.Asterisk);
                     this.login_button_click_count = 0;
+
+                    if(chkbox_remember_me.IsChecked == true)
+                    {
+                        SaveCredentialsInFile();
+                    }
+
+                    ClientData.SetConnectedAccountUsername(username);
+                    MainPage mainPage = new MainPage();
+                    this.Hide();
+                    mainPage.Show();
                 }
                 else
                 {
