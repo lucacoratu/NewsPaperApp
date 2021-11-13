@@ -29,9 +29,9 @@
             </Grid>
             <Label x:Name="lbl_articleCounter" Content="Label" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" HorizontalAlignment="Center"/>
         </StackPanel>
-        <Label x:Name="lbl_title" Content="Label" DockPanel.Dock="Top" Height="27"/>
-        <ScrollViewer Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}">
-            <TextBlock x:Name="txtblock_content" Text="TextBlock" TextWrapping="Wrap" Width="880" VerticalAlignment="Stretch" HorizontalAlignment="Stretch"/>
+        <Label x:Name="lbl_title" Content="Label" DockPanel.Dock="Top" Height="27" HorizontalContentAlignment="Center"/>
+        <ScrollViewer Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Width="888">
+            <TextBlock x:Name="txtblock_content" Text="TextBlock" TextWrapping="Wrap" Width="858" Height="747"/>
         </ScrollViewer>
     </DockPanel>
 </Window>

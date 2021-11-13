@@ -9,12 +9,14 @@ namespace NewsPaperApp
         private string Title;
         private string PublisherUsername;
         private string Content;
+        private string Category;
 
-        public Article(string title, string publisherUsername, string content)
+        public Article(string title, string publisherUsername, string content, string category)
         {
             this.Title = title;
             this.PublisherUsername = publisherUsername;
             this.Content = content;
+            this.Category = category;
         }
 
         public string GetTitle()
@@ -30,6 +32,11 @@ namespace NewsPaperApp
         public string GetContent()
         {
             return this.Content;
+        }
+
+        public string GetCategory()
+        {
+            return this.Category;
         }
     }
 }
