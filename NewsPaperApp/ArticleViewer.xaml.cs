@@ -97,5 +97,11 @@ namespace NewsPaperApp
             MainPage mainPage = new MainPage();
             mainPage.Show();
         }
+
+        private void button_rate_newspaper_Click(object sender, RoutedEventArgs e)
+        {
+            RateNewspaperWindow rateWindow = new RateNewspaperWindow();
+            rateWindow.Show();
+        }
     }
 }

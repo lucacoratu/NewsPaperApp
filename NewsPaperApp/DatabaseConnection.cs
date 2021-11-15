@@ -434,23 +434,34 @@ namespace NewsPaperApp
             }
 
             //TO DO...Check if the account hasn't already rated the newspaper
+            string query = @"select * from AccountRatings where NewsPaperID = (select ID from NewsPaper where Name =" + " \'" + name + "\') " +
+                            "and AccountID = (select ID from Accounts where Username = \'" + ClientData.GetConnectedAccountUsername() + "\')";
+            SqlDataAdapter dadap = new SqlDataAdapter(query, connectionString);
+            dadap.FillError += new FillErrorEventHandler(FillError);
+            DataTable dt1 = new DataTable();
+            dadap.Fill(dt1);
+
+            if(dt1.Rows.Count != 0)
+            {
+                return false;
+            }
 
             //First select the current rating and the ratings given
             string query1 = @"select Rating, RatingsGiven from Ratings
                              inner join Newspaper
                              on Newspaper.ID = Ratings.NewsPaperID
-                             where Newspaper.Name = \'" + name + "\'";
+                             where Newspaper.Name =" + "\'" + name + "\'";
 
             SqlDataAdapter da = new SqlDataAdapter(query1, connectionString);
             da.FillError += new FillErrorEventHandler(FillError);
             DataTable dt = new DataTable();
             da.Fill(dt);
 
-            float rating = dt.Rows[0].Field<float>("Rating");
+            double rating = dt.Rows[0].Field<double>("Rating");
             int ratingsGiven = dt.Rows[0].Field<int>("RatingsGiven");
 
             //Calculate the new rating
-            float newRating = rating * ratingsGiven;
+            double newRating = rating * ratingsGiven;
             newRating += grade;
             ratingsGiven++;
             newRating = newRating / ratingsGiven;
@@ -464,10 +475,36 @@ namespace NewsPaperApp
                 sqlConnection.Open();
                 cmd.CommandText = @"update R
                                     set Rating = " + newRating.ToString() + ", RatingsGiven = " + ratingsGiven.ToString() +
-                                    "from Ratings as R" +
-                                    "inner join NewsPaper" +
-                                    "on NewsPaper.ID = Ratings.NewsPaperID" +
+                                    " from Ratings as R " +
+                                    "inner join NewsPaper " +
+                                    "on NewsPaper.ID = R.NewsPaperID " +
                                     "where NewsPaper.Name = \'" + name + "\'";
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+            }
+            catch (SqlException sqlException)
+            {
+                MessageBox.Show(sqlException.Message, "Error " + sqlException.ErrorCode.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            catch (InvalidOperationException invalidOpException)
+            {
+                MessageBox.Show(invalidOpException.Message, "Error ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            try
+            {
+                int newspaperID = DatabaseConnection.GetNewspaperID(name);
+                sqlConnection.Open();
+                cmd.CommandText = @"insert into AccountRatings(NewsPaperID, AccountID, Grade) 
+                                    values( " + newspaperID.ToString() + ", (select ID from Accounts where Username =" + "\'" + ClientData.GetConnectedAccountUsername() + "\'), " + grade.ToString() + ")";
 
                 cmd.ExecuteNonQuery();
                 sqlConnection.Close();

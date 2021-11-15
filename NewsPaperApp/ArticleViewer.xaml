@@ -28,6 +28,7 @@
                 <Button x:Name="btn_incrementArticle" Grid.Column="1" Background="Transparent" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Content="&gt;" BorderBrush="Transparent" AutomationProperties.AccessKey="" Click="btn_incrementArticle_Click">
                 </Button>
             </Grid>
+            <Button x:Name="button_rate_newspaper" Content="Rate Newspaper" Click="button_rate_newspaper_Click"/>
         </StackPanel>
         <Label x:Name="lbl_title" Content="Label" DockPanel.Dock="Top" Height="27" HorizontalContentAlignment="Center"/>
         <Grid>
