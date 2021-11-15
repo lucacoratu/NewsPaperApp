@@ -124,6 +124,9 @@ namespace NewsPaperApp
                         SaveCredentialsInFile();
                     }
 
+                    //If there are newspapers with today's date (to be published) then switch them to published
+                    DatabaseConnection.NewspaperToday();
+
                     ClientData.SetConnectedAccountUsername(username);
                     MainPage mainPage = new MainPage();
                     this.Hide();

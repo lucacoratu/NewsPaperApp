@@ -15,7 +15,8 @@
 
     <DockPanel LastChildFill="true" HorizontalAlignment="Left" Width="1000" Height="784" VerticalAlignment="Top">
         <StackPanel x:Name="stckpanel_left" Width="110" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" FlowDirection="LeftToRight" VerticalAlignment="Stretch">
-            <Button x:Name="btn_back" Content="Back" Height="25"/>
+            <Button x:Name="btn_back" Content="Back" Height="25" Click="button_back_Click"/>
+            <Label x:Name="lbl_articleCounter" Content="Label" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" HorizontalAlignment="Center"/>
             <Grid Height="19">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition></ColumnDefinition>
@@ -27,11 +28,17 @@
                 <Button x:Name="btn_incrementArticle" Grid.Column="1" Background="Transparent" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Content="&gt;" BorderBrush="Transparent" AutomationProperties.AccessKey="" Click="btn_incrementArticle_Click">
                 </Button>
             </Grid>
-            <Label x:Name="lbl_articleCounter" Content="Label" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" HorizontalAlignment="Center"/>
         </StackPanel>
         <Label x:Name="lbl_title" Content="Label" DockPanel.Dock="Top" Height="27" HorizontalContentAlignment="Center"/>
-        <ScrollViewer Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Width="888">
-            <TextBlock x:Name="txtblock_content" Text="TextBlock" TextWrapping="Wrap" Width="858" Height="747"/>
-        </ScrollViewer>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition></RowDefinition>
+                <RowDefinition></RowDefinition>
+            </Grid.RowDefinitions>
+            <ScrollViewer Grid.Row="0" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Width="888" Height="370" VerticalScrollBarVisibility="Hidden">
+                <TextBlock x:Name="txtblock_content" Text="TextBlock" TextWrapping="Wrap" Width="875" Height="370"/>
+            </ScrollViewer>
+            <Image x:Name="img_article" Grid.Row="1" Stretch="UniformToFill" HorizontalAlignment="Stretch" ScrollViewer.VerticalScrollBarVisibility="Hidden" />
+        </Grid>
     </DockPanel>
 </Window>

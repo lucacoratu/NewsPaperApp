@@ -14,13 +14,15 @@ namespace NewsPaperApp
         private string name;
         private string publishingHouse;
         private DateTime publishingDate;
+        private double rating;
 
         //Constructor
-        public Newspaper(string name, string publishingHouse, DateTime publishingDate)
+        public Newspaper(string name, string publishingHouse, DateTime publishingDate, double rating)
         {
             this.name = name;
             this.publishingHouse = publishingHouse;
             this.publishingDate = publishingDate;
+            this.rating = rating;
         }
         
 
@@ -40,5 +42,9 @@ namespace NewsPaperApp
             return this.publishingDate;
         }
 
+        public double GetRating()
+        {
+            return this.rating;
+        }
     }
 }

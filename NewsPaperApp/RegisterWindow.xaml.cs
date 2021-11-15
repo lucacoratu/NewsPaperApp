@@ -70,5 +70,11 @@ namespace NewsPaperApp
         {
             Application.Current.Shutdown();
         }
+
+        private void button_back_Click(object sender, RoutedEventArgs e){
+            this.Hide();
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+        }
     }
 }

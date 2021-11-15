@@ -196,7 +196,8 @@ namespace NewsPaperApp
         {
             List<Newspaper> newspapers = new List<Newspaper>();
 
-            string query = "select Name, PublishingHouse, PublishingDate from NewsPaper";
+            string query = "select Name, PublishingHouse, PublishingDate, Rating from NewsPaper inner join Ratings on Ratings.NewsPaperID = NewsPaper.ID where Published = 1";
+            //string query = "select Name, PublishingHouse, PublishingDate from NewsPaper where Published = 1";
 
             SqlDataAdapter da = new SqlDataAdapter(query, connectionString);
             da.FillError += new FillErrorEventHandler(FillError);
@@ -205,7 +206,7 @@ namespace NewsPaperApp
 
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                newspapers.Add(new Newspaper(dt.Rows[i].Field<string>("Name"), dt.Rows[i].Field<string>("PublishingHouse"), dt.Rows[i].Field<DateTime>("PublishingDate")));
+                newspapers.Add(new Newspaper(dt.Rows[i].Field<string>("Name"), dt.Rows[i].Field<string>("PublishingHouse"), dt.Rows[i].Field<DateTime>("PublishingDate"), dt.Rows[i].Field<double>("Rating")));
             }
 
             return newspapers;
@@ -462,7 +463,7 @@ namespace NewsPaperApp
             {
                 sqlConnection.Open();
                 cmd.CommandText = @"update R
-                                set Rating = " + newRating.ToString() + ", RatingsGiven = " + ratingsGiven.ToString() +
+                                    set Rating = " + newRating.ToString() + ", RatingsGiven = " + ratingsGiven.ToString() +
                                     "from Ratings as R" +
                                     "inner join NewsPaper" +
                                     "on NewsPaper.ID = Ratings.NewsPaperID" +
@@ -538,8 +539,6 @@ namespace NewsPaperApp
             {
                 while (reader.Read())
                     list_of_unpublished_newspaper.Add(reader.GetValue(0).ToString());
-
-
 
             }
 
@@ -786,6 +785,97 @@ namespace NewsPaperApp
                 image_from_path.Visibility = System.Windows.Visibility.Hidden;
 
             sqlConnection.Close();
+        }
+
+        public static bool DeleteArticleFromNewsPaper(string article_title, string newspaper_title, string publishing_date)
+        {
+            string query = @"delete A 
+                            from Article A
+                            inner join NewsPaper as N
+                            on A.NewsPaperID = N.ID
+                            where N.Name = " + "\'" + newspaper_title + "\' and CAST(A.Title as VARCHAR(8000)) = \'" + article_title + "\' and N.PublishingDate = \'" + publishing_date + "\'";
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+            try
+            {
+                sqlConnection.Open();
+                cmd.CommandText = query;
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+            }
+            catch (SqlException sqlException)
+            {
+                MessageBox.Show(sqlException.Message, "Error " + sqlException.ErrorCode.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            catch (InvalidOperationException invalidOpException)
+            {
+                MessageBox.Show(invalidOpException.Message, "Error ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            return true;
+        }
+
+        public static bool InsertEmptyRating(string newspaper_name)
+        {
+            int newspaper_id = DatabaseConnection.GetNewspaperID(newspaper_name);
+            string query = "insert into Ratings(Rating, RatingsGiven, NewsPaperID) values( 0.0, 0, " + newspaper_id.ToString() + ")";
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+            try
+            {
+                sqlConnection.Open();
+                cmd.CommandText = query;
+
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+            }
+            catch (SqlException sqlException)
+            {
+                MessageBox.Show(sqlException.Message, "Error " + sqlException.ErrorCode.ToString(), MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            catch (InvalidOperationException invalidOpException)
+            {
+                MessageBox.Show(invalidOpException.Message, "Error ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show(e.Message, "Error ", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+
+            return true;
+        }
+
+        public static void NewspaperToday()
+        {
+            // if publishing date for a newspaper is today and Published=0 then update Published=1
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+
+            sqlConnection.Open();
+
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = @"
+            Update NewsPaper 
+            set Published=1
+            where CONVERT(VARCHAR,NewsPaper.PublishingDate,23)=CONVERT(VARCHAR,GETDATE(),23)";
+
+            cmd.ExecuteNonQuery();
+
+            sqlConnection.Close();
+
         }
     }
 }

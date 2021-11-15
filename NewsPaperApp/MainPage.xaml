@@ -10,6 +10,7 @@
         <StackPanel x:Name="stkpanel_left" Width="134" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
             <Ellipse x:Name="elipse_profile" Height="80" Stroke="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Width="80" MouseLeftButtonUp="elipse_profile_MouseLeftButtonUp">
                 <Ellipse.Fill>
+                    <!-- Picture not working... TO DO...Later-->
                     <ImageBrush/>
                 </Ellipse.Fill>
             </Ellipse>
@@ -18,10 +19,12 @@
             <Button x:Name="button_create_new_newspaper" Content="Create New Newspaper" Click="button_create_new_newspaper_Click"/>
             <Button x:Name="button_Publish_newspaper" Content="Publish Newspaper" Click="button_Publish_newspaper_Click"/>
             <Button x:Name="button_view_your_article" Content="View Your Articles" Click="button_view_your_article_Click"/>
+            <Button x:Name="button_view_newspapers" Content="View Newspapers" Click="button_view_newspapers_Click"/>
+            <Button x:Name="button_logout" Content="Logout" Margin="0,530,0,0" Click="button_logout_Click"/>
         </StackPanel>
-        <ListBox x:Name="listbox_newspapers" Width="864" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Cursor="Hand"/>
-        <Canvas x:Name="canvas_write_article" Width="858" Background="#FFEBEADC" Visibility="Visible" RenderTransformOrigin="0.483,0.262" Margin="-860,0,0,0">
-            <Label x:Name="lbl_Title" Content="Title" Canvas.Left="110" Canvas.Top="66" Visibility="Hidden"/>
+        <ListBox x:Name="listbox_newspapers" Width="864" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Cursor="Hand" ScrollViewer.VerticalScrollBarVisibility="Hidden"/>
+        <Canvas x:Name="canvas_write_article" Width="858" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" Visibility="Visible" RenderTransformOrigin="0.483,0.262" Margin="-860,0,0,0">
+            <Label x:Name="lbl_Title" Content="Name" Canvas.Left="110" Canvas.Top="66" Visibility="Hidden"/>
             <TextBox x:Name="txt_box_title" Canvas.Left="212" Canvas.Top="66" TextWrapping="Wrap" Width="137" Height="22" Visibility="Hidden"/>
             <Label x:Name="lbl_content" Content="Content" Canvas.Left="56" Canvas.Top="449" RenderTransformOrigin="-0.1,-0.172" Visibility="Hidden"/>
             <TextBox x:Name="txt_box_content" Canvas.Left="133" Canvas.Top="363" TextWrapping="Wrap" Width="623" Height="270" Visibility="Hidden"/>
@@ -46,12 +49,13 @@
             <Label x:Name="lbl_PublishingHouse" Content="PublishingHouse" Canvas.Left="77" Canvas.Top="149" RenderTransformOrigin="-0.29,0.502" Visibility="Hidden"/>
             <TextBox x:Name="txt_box_PublishingHouse" Canvas.Left="212" Canvas.Top="153" TextWrapping="Wrap" Width="120" Visibility="Hidden"/>
             <Button x:Name="button_publish_newspaper" Content="Publish" Canvas.Left="173" Canvas.Top="364" Height="47" Width="130" Click="button_publish_newspaper_Click_1" Visibility="Hidden"/>
-            <DataGrid x:Name="data_grid_view_your_articles" Height="189" Width="513" Canvas.Top="91" Canvas.Left="24" SelectionChanged="data_grid_view_your_articles_SelectionChanged" Visibility="Visible"/>
+            <DataGrid x:Name="data_grid_view_your_articles" Height="189" Width="513" Canvas.Top="91" Canvas.Left="24" SelectionChanged="data_grid_view_your_articles_SelectionChanged" Visibility="Hidden"/>
             <TextBlock x:Name="txt_block_content" Canvas.Left="24" Canvas.Top="379" TextWrapping="Wrap" Height="258" Width="512" Background="#FFF0F0F0" Visibility="Visible"/>
             <Label x:Name="lbl_article_content" Content="Content" Canvas.Left="54" Canvas.Top="338" Visibility="Visible" RenderTransformOrigin="0.128,0.614"/>
             <Label x:Name="lbl_photo_path" Content="PhotoPath" Canvas.Left="80" Canvas.Top="311" Visibility="Hidden"/>
             <TextBox x:Name="txt_box_photo_path" Canvas.Left="212" Canvas.Top="315" TextWrapping="Wrap" Width="179" Height="22" Visibility="Hidden"/>
             <Image x:Name="image_photo_from_article" Height="252" Canvas.Left="572" Canvas.Top="382" Width="262"/>
+            <Button x:Name="button_delete_article" Content="Delete Article" Canvas.Left="690" Canvas.Top="91" Width="110" Click="button_delete_article_Click"/>
         </Canvas>
     </DockPanel>
 </Window>

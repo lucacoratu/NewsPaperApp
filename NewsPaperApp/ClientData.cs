@@ -8,6 +8,7 @@ namespace NewsPaperApp
     {
         private static string ConnectedAccountUsername;
         private static string CurrentNewspaper;
+        private static string CurrentNewspaperDate;
         
         //Modifiers
         public static void SetConnectedAccountUsername(string username)
@@ -19,7 +20,10 @@ namespace NewsPaperApp
         {
             CurrentNewspaper = currentNewspaper;
         }
-
+        public static void SetCurrentNewspaperDate(string date)
+        {
+            CurrentNewspaperDate = date;
+        }
         //Accessors
         public static string GetConnectedAccountUsername()
         {
@@ -29,6 +33,11 @@ namespace NewsPaperApp
         public static string GetCurrentNewspaper()
         {
             return CurrentNewspaper;
+        }
+
+        public static string GetCurrentNewspaperDate()
+        {
+            return CurrentNewspaperDate;
         }
     }
 }

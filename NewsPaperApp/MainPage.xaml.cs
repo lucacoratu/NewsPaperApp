@@ -25,6 +25,10 @@ namespace NewsPaperApp
 
         void InitializeListNewsPapers()
         {
+            this.newsPapers.Clear();
+            this.userControlNewsPapers.Clear();
+            this.listbox_newspapers.Items.Clear();
+
             this.newsPapers = DatabaseConnection.GetAvailableNewspapers();
 
             foreach(var newspaper in newsPapers)
@@ -33,6 +37,7 @@ namespace NewsPaperApp
                 this.userControlNewsPapers[userControlNewsPapers.Count - 1].lbl_newpaperName.Content = newspaper.GetName();
                 this.userControlNewsPapers[userControlNewsPapers.Count - 1].lbl_publishingHouse.Content = newspaper.GetPublishingHouse();
                 this.userControlNewsPapers[userControlNewsPapers.Count - 1].lbl_publishingDate.Content = newspaper.GetPublishingDate();
+                this.userControlNewsPapers[userControlNewsPapers.Count - 1].lbl_rating.Content = "Rating: " + newspaper.GetRating().ToString();
                 this.userControlNewsPapers[userControlNewsPapers.Count - 1].grid_newspaper.MouseLeftButtonDown += this.usercontrol_clicked;
 
                 this.listbox_newspapers.Items.Add(this.userControlNewsPapers[userControlNewsPapers.Count - 1]);
@@ -44,6 +49,9 @@ namespace NewsPaperApp
             InitializeComponent();
 
             InitializeListNewsPapers();
+            this.data_grid_view_your_articles.Visibility = Visibility.Hidden;
+            this.txt_block_content.Visibility = Visibility.Hidden;
+            this.lbl_article_content.Visibility = Visibility.Hidden;
 
             if (DatabaseConnection.CheckAccountTypeForUser(ClientData.GetConnectedAccountUsername()) == "1") {
                 //Reader
@@ -52,11 +60,13 @@ namespace NewsPaperApp
                 this.button_create_new_newspaper.Visibility = Visibility.Hidden;
                 this.button_Publish_newspaper.Visibility = Visibility.Hidden;
                 this.button_view_your_article.Visibility = Visibility.Hidden;
+                this.button_view_newspapers.Visibility = Visibility.Hidden;
             }
             else
             {
                 //Writer
                 this.listbox_newspapers.Visibility = Visibility.Hidden;
+                this.button_delete_article.Visibility = Visibility.Hidden;
             }
         }
 
@@ -79,6 +89,7 @@ namespace NewsPaperApp
             if (this.listbox_newspapers.SelectedIndex != -1)
             {
                 ClientData.SetCurrentNewspaper(this.newsPapers[this.listbox_newspapers.SelectedIndex].GetName());
+                ClientData.SetCurrentNewspaperDate(this.newsPapers[this.listbox_newspapers.SelectedIndex].GetPublishingDate().ToString());
                 ArticleViewer artviewer = new ArticleViewer();
                 this.Hide();
                 artviewer.Show();
@@ -168,15 +179,18 @@ namespace NewsPaperApp
             txt_box_PublishingHouse,
             button_publish_newspaper,
             data_grid_view_your_articles,
-            lbl_article_content
+            lbl_article_content,
+            button_delete_article
             });
             this.txt_block_content.Visibility = Visibility.Hidden;
+            this.image_photo_from_article.Visibility = Visibility.Hidden;
 
             change_control_visibility(controls_visible_write_new_article, "Visible");
             change_control_visibility(controls_hidden_write_new_article, "Hidden");
         }
         private void button_write_new_article_Click(object sender, RoutedEventArgs e)
         {
+            this.image_photo_from_article.Visibility = Visibility.Hidden;
             initiate_write_new_article_components();
             UnpublishedNewspaperList();
         }
@@ -184,8 +198,6 @@ namespace NewsPaperApp
         private void initiate_create_new_newspaper_components()
         {
             canvas_write_article.Visibility = Visibility.Visible;
-
-
 
             List<Control> controls_visible_create_new_article = new List<Control>();
             controls_visible_create_new_article.AddRange(new List<Control>
@@ -214,7 +226,8 @@ namespace NewsPaperApp
             data_grid_view_your_articles,
             lbl_article_content,
             txt_box_photo_path,
-            lbl_photo_path
+            lbl_photo_path,
+            button_delete_article
             });
             this.txt_block_content.Visibility = Visibility.Hidden;
             change_control_visibility(controls_visible_create_new_article, "Visible");
@@ -222,6 +235,7 @@ namespace NewsPaperApp
         }
         private void button_create_new_newspaper_Click(object sender, RoutedEventArgs e)
         {
+            this.image_photo_from_article.Visibility = Visibility.Hidden;
             initiate_create_new_newspaper_components();
         }
 
@@ -266,7 +280,8 @@ namespace NewsPaperApp
             data_grid_view_your_articles,
             lbl_article_content,
             txt_box_photo_path,
-            lbl_photo_path
+            lbl_photo_path,
+            button_delete_article
             });
 
 
@@ -276,6 +291,7 @@ namespace NewsPaperApp
         }
         private void button_Publish_newspaper_Click(object sender, RoutedEventArgs e)
         {
+            this.image_photo_from_article.Visibility = Visibility.Hidden;
             initiate_publish_newspaper();
             UnpublishedNewspaperList();
         }
@@ -283,21 +299,17 @@ namespace NewsPaperApp
         private void initiate_view_your_articles_components()
         {
 
-
-
             canvas_write_article.Visibility = Visibility.Visible;
             txt_block_content.Visibility = Visibility.Visible;
-
 
 
             List<Control> controls_visible_view_your_articles = new List<Control>();
             controls_visible_view_your_articles.AddRange(new List<Control>
             {
             data_grid_view_your_articles,
-            lbl_article_content
+            lbl_article_content,
+            button_delete_article
             });
-
-
 
 
             List<Control> controls_hidden_view_your_articles = new List<Control>();
@@ -305,8 +317,8 @@ namespace NewsPaperApp
             {
             lbl_Title,
             txt_box_title,
-            lbl_content,
             txt_box_content,
+            lbl_content,
             lbl_category,
             combo_box_category,
             lbl_date_of_publication,
@@ -347,15 +359,11 @@ namespace NewsPaperApp
             else
                 title = txt_box_title.Text;
 
-
-
-
             //Check input for content
             if (txt_box_content.Text == "")
                 not_empty_fields = false;
             else
                 content = txt_box_content.Text;
-
 
 
             // Check if newspaper name was selected
@@ -365,13 +373,8 @@ namespace NewsPaperApp
                 newspaper_name = this.list_box_newspaper_name.SelectedItem.ToString();
 
 
-
-
             // Photo path can be empty
             photo_path = txt_box_photo_path.Text;
-
-
-
 
             // Check if category name was selected
             if (this.combo_box_category.SelectedItem == null)
@@ -387,18 +390,13 @@ namespace NewsPaperApp
             }
 
 
-
-
             bool insert_success;
-
 
 
             if (not_empty_fields)
                 insert_success = DatabaseConnection.WriteArticle(title, content, photo_path, username, newspaper_name, category_name);
             else
                 insert_success = false;
-
-
 
 
             if (insert_success)
@@ -414,9 +412,9 @@ namespace NewsPaperApp
             if (list_box_newspaper_name.SelectedItem == null)
                 insert_success = false;
             else
+            {
                 insert_success = DatabaseConnection.PublishExistingNewspaper(list_box_newspaper_name.SelectedItem.ToString());
-
-
+            }
 
             if (insert_success)
                 ShowMessage3Sec("NewsPaper Published!");
@@ -447,7 +445,10 @@ namespace NewsPaperApp
                 date = this.calendar_publication_date.SelectedDate.ToString();
 
             if (no_empty_fields)
+            {
                 insert_success = DatabaseConnection.InsertNewNewspaper(title, publishing_house, date);
+                bool res = DatabaseConnection.InsertEmptyRating(title);
+            }
             else
                 insert_success = false;
 
@@ -469,6 +470,44 @@ namespace NewsPaperApp
                 string publihing_date = row_selected["PublishingDate"].ToString();
                 DatabaseConnection.ShowContent(article_title, newspaper_title, publihing_date, txt_block_content);
                 DatabaseConnection.ShowPicture(article_title, newspaper_title, publihing_date, this.image_photo_from_article);
+            }
+        }
+
+        private void button_view_newspapers_Click(object sender, RoutedEventArgs e)
+        {
+            this.InitializeListNewsPapers();
+            this.canvas_write_article.Visibility = Visibility.Hidden;
+            this.listbox_newspapers.Visibility = Visibility.Visible;
+        }
+
+        private void button_logout_Click(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
+            MainWindow mainWindow = new MainWindow();
+            mainWindow.Show();
+        }
+
+        private void button_delete_article_Click(object sender, RoutedEventArgs e)
+        {
+            DataGrid dg = this.data_grid_view_your_articles;
+            DataRowView row_selected = dg.SelectedItem as DataRowView;
+            if (row_selected != null)
+            {
+                string article_title = row_selected["Title"].ToString();
+                string newspaper_title = row_selected["Newspaper name"].ToString();
+                string publishing_date = row_selected["PublishingDate"].ToString();
+
+                bool res = DatabaseConnection.DeleteArticleFromNewsPaper(article_title, newspaper_title, publishing_date);
+
+                if(res == false)
+                {
+                    //No need to update the datagrid
+                }
+                else
+                {
+                    //Update the datagrid
+                    DatabaseConnection.ShowArticles(ClientData.GetConnectedAccountUsername(), this.data_grid_view_your_articles);
+                }
             }
         }
     }

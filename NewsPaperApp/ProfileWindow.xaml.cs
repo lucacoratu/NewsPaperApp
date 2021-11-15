@@ -123,5 +123,12 @@ namespace NewsPaperApp
         {
             Application.Current.Shutdown();
         }
+
+        private void button_back_Click(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
+            MainPage mainPage = new MainPage();
+            mainPage.Show();
+        }
     }
 }

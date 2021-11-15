@@ -19,6 +19,7 @@ namespace NewsPaperApp
     {
         List<Article> articles = new List<Article>();
         List<ArticleUserControl> articleUserControls = new List<ArticleUserControl>();
+        int selectedArticle = 0;
         void InitializeArticleListBox()
         {
             this.articles = DatabaseConnection.GetNewspaperArticles(ClientData.GetCurrentNewspaper());
@@ -38,11 +39,13 @@ namespace NewsPaperApp
                 this.txtblock_content.Text = articles[0].GetContent();
 
                 this.lbl_articleCounter.Content = "Article 1 / " + this.articles.Count.ToString();
+                DatabaseConnection.ShowPicture(this.articles[0].GetTitle(), ClientData.GetCurrentNewspaper(), ClientData.GetCurrentNewspaperDate(), this.img_article);
             }
             else
             {
                 this.lbl_articleCounter.Content = "Article 0 / " + this.articles.Count.ToString();
             }
+
         }
 
         public ArticleViewer()
@@ -59,12 +62,40 @@ namespace NewsPaperApp
 
         private void btn_decrementArticle_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Click left");
+            if (this.selectedArticle > 0)
+                this.selectedArticle--;
+            else
+                this.selectedArticle = this.articles.Count - 1;
+
+            int aux = this.selectedArticle + 1;
+
+            this.lbl_articleCounter.Content = "Article " + aux.ToString() + " / " + this.articles.Count.ToString();
+            this.lbl_title.Content = this.articles[this.selectedArticle].GetTitle();
+            this.txtblock_content.Text = this.articles[this.selectedArticle].GetContent();
+
+            DatabaseConnection.ShowPicture(this.articles[this.selectedArticle].GetTitle(), ClientData.GetCurrentNewspaper(), ClientData.GetCurrentNewspaperDate(), this.img_article);
         }
 
         private void btn_incrementArticle_Click(object sender, RoutedEventArgs e)
         {
+            if (this.selectedArticle < this.articles.Count - 1)
+                this.selectedArticle++;
+            else
+                this.selectedArticle = 0;
 
+            int aux = this.selectedArticle + 1;
+            this.lbl_articleCounter.Content = "Article " + aux.ToString() + " / " + this.articles.Count.ToString();
+            this.lbl_title.Content = this.articles[this.selectedArticle].GetTitle();
+            this.txtblock_content.Text = this.articles[this.selectedArticle].GetContent();
+
+            DatabaseConnection.ShowPicture(this.articles[this.selectedArticle].GetTitle(), ClientData.GetCurrentNewspaper(), ClientData.GetCurrentNewspaperDate(), this.img_article);
+        }
+
+        private void button_back_Click(object sender, RoutedEventArgs e)
+        {
+            this.Hide();
+            MainPage mainPage = new MainPage();
+            mainPage.Show();
         }
     }
 }

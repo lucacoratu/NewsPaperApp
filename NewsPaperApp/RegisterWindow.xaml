@@ -7,7 +7,9 @@
         mc:Ignorable="d"
         Title="NewsPaperApp" Height="800" Width="1000" Background="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}" FontFamily="Calisto MT" FontSize="16" WindowStartupLocation="CenterScreen" Closed="register_window_Closed">
     <DockPanel LastChildFill="False">
-        <StackPanel Width="120" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
+        <StackPanel Width="120" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}">
+            <Button Content="Back" FontFamily="Calisto MT" FontSize="10" Height="30" Background="{x:Null}" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" Click="button_back_Click"/>
+        </StackPanel>
         <Grid x:Name="register_grid" Width="878">
             <Label Content="Username" HorizontalAlignment="Left" Margin="138,164,0,0" VerticalAlignment="Top" Width="161" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}"/>
             <Label Content="Email" HorizontalAlignment="Left" Margin="138,236,0,0" VerticalAlignment="Top" Width="161" Foreground="{DynamicResource {x:Static SystemColors.ControlLightLightBrushKey}}" RenderTransformOrigin="0.466,-1.987"/>
