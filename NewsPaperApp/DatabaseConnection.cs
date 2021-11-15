@@ -4,6 +4,9 @@ using System.Text;
 using System.Data;
 using System.Data.SqlClient;
 using System.Windows;
+using System.Windows.Controls;
+using System.Data.Common;
+using System.Windows.Media.Imaging;
 
 namespace NewsPaperApp
 {
@@ -374,7 +377,7 @@ namespace NewsPaperApp
             {
                 sqlConnection.Open();
                 cmd.CommandText = @"insert into Comments values(UserID, Content, NewsPaperID, PublishingDate)
-                                values ((select ID from Accounts where Name = \'" + publisherName + "\'), \'" + content + "\', (select ID from NewsPaper where Name = \'" + newspaperName + "\'), GETDATE())";
+                                    values ((select ID from Accounts where Name = \'" + publisherName + "\'), \'" + content + "\', (select ID from NewsPaper where Name = \'" + newspaperName + "\'), GETDATE())";
 
                 cmd.ExecuteNonQuery();
                 sqlConnection.Close();
@@ -485,6 +488,304 @@ namespace NewsPaperApp
             }
 
             return true;
+        }
+
+
+        //Writer
+        public static string CheckAccountTypeForUser(string username)
+        {
+            /*
+            * Check if user is writer(return true) or reader(return false)
+            */
+
+            var cmd = sqlConnection.CreateCommand();
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "select Type from Accounts where Username = \'" + username + "\'";
+
+            sqlConnection.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+            string type = "";
+            while (reader.Read())
+                type = reader[0].ToString();
+            sqlConnection.Close();
+
+
+
+            return type;
+        }
+        public static List<string> GetNameListOfUnpublishedNewspapers()
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+
+
+
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "select Name from NewsPaper where Published=0";
+
+
+
+            sqlConnection.Open();
+            SqlDataReader reader = cmd.ExecuteReader();
+
+
+
+            List<string> list_of_unpublished_newspaper = new List<string>();
+
+
+
+            if (reader.HasRows)
+            {
+                while (reader.Read())
+                    list_of_unpublished_newspaper.Add(reader.GetValue(0).ToString());
+
+
+
+            }
+
+            reader.Close();
+            sqlConnection.Close();
+            return list_of_unpublished_newspaper;
+        }
+
+        public static void ShowArticles(string publisher_username, DataGrid data_grid_view_your_articles)
+        {
+            //Fill DataGrid object with articles with no order option
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+            cmd.CommandType = CommandType.Text;
+
+            sqlConnection.Open();
+
+            cmd.CommandText = @"select Title,N.Name as 'Newspaper name',N.PublishingHouse,AC.Name as 'Category',N.PublishingDate
+                                from Article
+                                inner join Accounts
+                                on Article.PublisherID = Accounts.ID
+                                inner
+                                join NewsPaper as N
+                                on Article.NewsPaperID = N.ID
+                                inner
+                                join ArticleCategories as AC
+                                on Article.CategoryID = AC.ID where Accounts.Username = '";
+            cmd.CommandText += publisher_username + "\'";
+
+            cmd.ExecuteNonQuery();
+            SqlDataAdapter da = new SqlDataAdapter(cmd);
+            DataTable dt = new DataTable("Article");
+            da.Fill(dt);
+            data_grid_view_your_articles.ItemsSource = dt.DefaultView;
+            da.Update(dt);
+            sqlConnection.Close();
+        }
+
+        public static int GetPublisherID(string username)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+
+            sqlConnection.Open();
+            cmd.CommandText = "select ID from Accounts where Username = \'" + username + "\'";
+            int publisherID = (int)cmd.ExecuteScalar();
+
+            sqlConnection.Close();
+
+            return publisherID;
+        }
+
+        public static int GetNewspaperID(string newspaper_name)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+
+            sqlConnection.Open();
+
+            cmd.CommandText = "select ID from NewsPaper where Name = \'" + newspaper_name + "\'";
+            int newspaperID = (int)cmd.ExecuteScalar();
+
+            sqlConnection.Close();
+
+            return newspaperID;
+        }
+
+        public static int GetCategoryID(string category_name)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+
+            sqlConnection.Open();
+
+            cmd.CommandType = CommandType.Text;
+            cmd.CommandText = "select ID from ArticleCategories where Name=\'" + category_name + "\'";
+
+
+            int categoryID = (int)cmd.ExecuteScalar();
+
+            sqlConnection.Close();
+            return categoryID;
+        }
+        public static bool WriteArticle(string title, string content, string photo_path, string username, string newspaper_name, string category)
+        {
+            int publisherID = GetPublisherID(username);
+            int newspaperID = GetNewspaperID(newspaper_name);
+            int categoryID = GetCategoryID(category);
+
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+
+            sqlConnection.Open();
+            cmd.CommandText = "insert into Article values ( \'" + title + "\', \'" + content + "\',\'" + photo_path + "\', " + publisherID.ToString() + ", " + newspaperID.ToString() + ", " + categoryID.ToString() + ")";
+
+            int nr_rows_affected = cmd.ExecuteNonQuery();
+            sqlConnection.Close();
+
+            if (nr_rows_affected != 0)
+                return true; // success
+            return false; // error
+        }
+
+        public static bool PublishExistingNewspaper(string newspaper)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+
+
+            cmd.CommandType = CommandType.Text;
+            sqlConnection.Open();
+
+
+            cmd.CommandText = "update NewsPaper set Published=1 where Name=\'" + newspaper + "\'";
+
+            int nr_rows_affected = cmd.ExecuteNonQuery();
+
+            if (nr_rows_affected == 0)
+            {
+                sqlConnection.Close();
+                return false;
+            }
+            else
+            {
+                cmd.CommandText = "update NewsPaper set PublishingDate=GETDATE() where name=\'" + newspaper + "\'";
+                cmd.ExecuteNonQuery();
+                sqlConnection.Close();
+                return true;
+            }
+
+        }
+
+        public static bool InsertNewNewspaper(string title, string publishing_house, string date)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+
+            DateTime time_now = DateTime.Now;
+            DateTime date_hour = DateTime.Parse(date);
+
+            int comp = DateTime.Compare(date_hour, time_now);
+            if (comp < 0)
+                return false;
+
+            cmd.CommandType = CommandType.Text;
+            sqlConnection.Open();
+            cmd.CommandText = "insert into Newspaper values (\'" + date_hour + "\',\'"
+            + publishing_house + "\',\'"
+            + title + "\',"
+            + "0)";
+            int nr_rows_affected = cmd.ExecuteNonQuery();
+            sqlConnection.Close();
+
+            if (nr_rows_affected == 0)
+                return false;
+            else return true;
+
+        }
+
+        public static void ShowContent(string article_name, string newspaper_name, string publishing_date, TextBlock txt_block)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+            cmd.CommandType = CommandType.Text;
+
+
+
+            sqlConnection.Open();
+
+
+
+            cmd.CommandText = @"select A.Content
+                                from Article as A
+                                inner join Accounts
+                                on a.PublisherID=Accounts.ID
+                                inner join NewsPaper as N
+                                on N.ID=A.NewsPaperID
+                                where Accounts.Username = '";
+            cmd.CommandText += ClientData.GetConnectedAccountUsername() + "\'";
+
+
+
+            cmd.CommandText += @"AND CAST(A.Title as VARCHAR(8000))='";
+            cmd.CommandText += article_name;
+            cmd.CommandText += "' AND N.Name='";
+            cmd.CommandText += newspaper_name;
+            cmd.CommandText += "'AND N.PublishingDate='";
+            cmd.CommandText += publishing_date + "'";
+
+
+
+            DbDataReader reader = cmd.ExecuteReader();
+            while (reader.Read())
+                txt_block.Text = reader.GetString(0);
+
+            sqlConnection.Close();
+        }
+
+        public static void ShowPicture(string article_name, string newspaper_name, string publishing_date, Image image_from_path)
+        {
+            SqlCommand cmd = new SqlCommand();
+            cmd.Connection = sqlConnection;
+            cmd.CommandType = CommandType.Text;
+
+
+
+            sqlConnection.Open();
+
+
+
+            cmd.CommandText = @"select A.PhotoPath
+                                from Article as A
+                                inner join Accounts
+                                on a.PublisherID=Accounts.ID
+                                inner join NewsPaper as N
+                                on N.ID=A.NewsPaperID
+                                where Accounts.Username = '";
+            cmd.CommandText += ClientData.GetConnectedAccountUsername() + "\'";
+            cmd.CommandText += @"AND CAST(A.Title as VARCHAR(8000))='";
+            cmd.CommandText += article_name;
+            cmd.CommandText += "' AND N.Name='";
+            cmd.CommandText += newspaper_name;
+            cmd.CommandText += "'AND N.PublishingDate='";
+            cmd.CommandText += publishing_date + "'";
+
+            DbDataReader reader = cmd.ExecuteReader();
+
+            string path = "";
+
+            while (reader.Read())
+                if (reader.GetString(0) == null)
+                    path = "";
+                else
+                    path = reader.GetString(0);
+
+            if (path != "")
+            {
+                image_from_path.Visibility = System.Windows.Visibility.Visible;
+                image_from_path.Source = new BitmapImage(new Uri(path));
+
+            }
+            else
+                image_from_path.Visibility = System.Windows.Visibility.Hidden;
+
+            sqlConnection.Close();
         }
     }
 }

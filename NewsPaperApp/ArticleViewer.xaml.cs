@@ -32,10 +32,17 @@ namespace NewsPaperApp
                 //this.lstbox_articles.Items.Add(this.articleUserControls[this.articleUserControls.Count - 1]);
             }
 
-            this.lbl_title.Content = articles[0].GetTitle();
-            this.txtblock_content.Text = articles[0].GetContent();
+            if (articles.Count != 0)
+            {
+                this.lbl_title.Content = articles[0].GetTitle();
+                this.txtblock_content.Text = articles[0].GetContent();
 
-            this.lbl_articleCounter.Content = "Article 1 / " + this.articles.Count.ToString(); 
+                this.lbl_articleCounter.Content = "Article 1 / " + this.articles.Count.ToString();
+            }
+            else
+            {
+                this.lbl_articleCounter.Content = "Article 0 / " + this.articles.Count.ToString();
+            }
         }
 
         public ArticleViewer()
